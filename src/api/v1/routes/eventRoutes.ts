@@ -2,12 +2,12 @@ import { Router } from "express";
 import { validate } from "../middleware/validate.middleware";
 import { createEventSchema } from "../validation/event.validation";
 import { HTTP_STATUS } from "../../../constants/httpStatus";
+import { createEvent } from "../controllers/eventController";
 
 const router = Router();
 
-router.post("/", validate(createEventSchema), (req, res) => {
-    res.status(HTTP_STATUS.CREATED).json(req.body);
-  }
+router.post("/", validate(createEventSchema),
+  createEvent
 );
 
 router.get("/", (req, res) => {
