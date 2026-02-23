@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as eventService from "../services/eventService";
+import { HTTP_STATUS } from "src/constants/httpStatus";
 
 /**
  * Create Event
@@ -11,7 +12,7 @@ export const createEventHandler = async (
 ): Promise<void> => {
   try {
     const event = await eventService.createEvent(req.body);
-    res.status(201).json(event);
+    res.status(HTTP_STATUS.CREATED).json(event);
   } catch (error) {
     next(error);
   }
@@ -27,7 +28,7 @@ export const getAllEventsHandler = async (
 ): Promise<void> => {
   try {
     const events = await eventService.getAllEvents();
-    res.status(200).json(events);
+    res.status(HTTP_STATUS.OK).json(events);
   } catch (error) {
     next(error);
   }
@@ -45,11 +46,11 @@ export const getEventByIdHandler = async (
     const event = await eventService.getEventById(req.params.id as string);
 
     if (!event) {
-      res.status(404).json({ message: "Event not found" });
+      res.status(HTTP_STATUS.NOT_FOUND).json({ message: "Event not found" });
       return;
     }
 
-    res.status(200).json(event);
+    res.status(HTTP_STATUS.OK).json(event);
   } catch (error) {
     next(error);
   }
@@ -65,7 +66,7 @@ export const updateEventHandler = async (
 ): Promise<void> => {
   try {
     await eventService.updateEvent(req.params.id as string, req.body);
-    res.status(200).json({ message: "Event updated" });
+    res.status(HTTP_STATUS.OK).json({ message: "Event updated" });
   } catch (error) {
     next(error);
   }
@@ -81,7 +82,7 @@ export const deleteEventHandler = async (
 ): Promise<void> => {
   try {
     await eventService.deleteEvent(req.params.id as string);
-    res.status(200).json({ message: "Event deleted" });
+    res.status(HTTP_STATUS.OK).json({ message: "Event deleted" });
   } catch (error) {
     next(error);
   }
