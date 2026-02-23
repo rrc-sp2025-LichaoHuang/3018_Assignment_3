@@ -1,19 +1,52 @@
-import { Router } from "express";
-import { validate } from "../middleware/validate.middleware";
-import { createEventSchema } from "../validation/event.validation";
-import { HTTP_STATUS } from "../../../constants/httpStatus";
-import { createEvent } from "../controllers/eventController";
+import express from "express";
+import { validateRequest } from "../middleware/validate";
+import { eventSchemas } from "../validation/eventSchemas";
+import * as eventController from "../controllers/eventController";
 
-const router = Router();
+const router = express.Router();
 
-router.post("/", validate(createEventSchema),
-  createEvent
+/**
+ * POST /events
+ */
+router.post(
+  "/events",
+  validateRequest(eventSchemas.create),
+  eventController.createEventHandler
 );
 
-router.get("/", (req, res) => {
-  res.status(HTTP_STATUS.OK).json({
-    message: "Events endpoint working",
-  });
-});
+/**
+ * GET /events
+ */
+router.get(
+  "/events",
+  eventController.getAllEventsHandler
+);
+
+/**
+ * GET /events/:id
+ */
+router.get(
+  "/events/:id",
+  validateRequest(eventSchemas.getById),
+  eventController.getEventByIdHandler
+);
+
+/**
+ * PUT /events/:id
+ */
+router.put(
+  "/events/:id",
+  validateRequest(eventSchemas.update),
+  eventController.updateEventHandler
+);
+
+/**
+ * DELETE /events/:id
+ */
+router.delete(
+  "/events/:id",
+  validateRequest(eventSchemas.delete),
+  eventController.deleteEventHandler
+);
 
 export default router;
