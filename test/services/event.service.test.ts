@@ -9,7 +9,7 @@ describe("Event Service", () => {
     jest.clearAllMocks();
   });
 
-  it("should create an event", async () => {
+  it("should generate 6-digit formatted ID when creating event", async () => {
     // Arrange
     const data = {
       name: "Test Event",
@@ -22,9 +22,10 @@ describe("Event Service", () => {
     (repository.createDocument as jest.Mock).mockResolvedValue({});
 
     // Act
-    await eventService.createEvent(data);
+    const result = await eventService.createEvent(data);
 
     // Assert
+    expect(result.id).toBe("evt_000001");
     expect(repository.createDocument).toHaveBeenCalled();
   });
 
@@ -32,7 +33,7 @@ describe("Event Service", () => {
     // Arrange
     (repository.getDocuments as jest.Mock).mockResolvedValue({
       docs: [
-        { data: () => ({ id: "evt_1" }) }
+        { data: () => ({ id: "evt_000001" }) }
       ]
     });
 
@@ -40,30 +41,30 @@ describe("Event Service", () => {
     const result = await eventService.getAllEvents();
 
     // Assert
-    expect(result.length).toBe(1);
+    expect(result[0].id).toBe("evt_000001");
   });
 
-  it("should update event", async () => {
+  it("should update event if it exists", async () => {
     // Arrange
     (repository.getDocumentById as jest.Mock).mockResolvedValue({
-      data: () => ({ id: "evt_1" })
+      data: () => ({ id: "evt_000001" })
     });
 
     // Act
-    await eventService.updateEvent("evt_1", { capacity: 200 });
+    await eventService.updateEvent("evt_000001", { capacity: 200 });
 
     // Assert
     expect(repository.updateDocument).toHaveBeenCalled();
   });
 
-  it("should delete event", async () => {
+  it("should delete event if it exists", async () => {
     // Arrange
     (repository.getDocumentById as jest.Mock).mockResolvedValue({
-      data: () => ({ id: "evt_1" })
+      data: () => ({ id: "evt_000001" })
     });
 
     // Act
-    await eventService.deleteEvent("evt_1");
+    await eventService.deleteEvent("evt_000001");
 
     // Assert
     expect(repository.deleteDocument).toHaveBeenCalled();
