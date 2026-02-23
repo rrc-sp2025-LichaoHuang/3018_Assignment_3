@@ -9,7 +9,7 @@ const router = express.Router();
  * POST /events
  */
 router.post(
-  "/events",
+  "/",
   validateRequest(eventSchemas.create),
   eventController.createEventHandler
 );
@@ -18,7 +18,7 @@ router.post(
  * GET /events
  */
 router.get(
-  "/events",
+  "/",
   eventController.getAllEventsHandler
 );
 
@@ -26,7 +26,7 @@ router.get(
  * GET /events/:id
  */
 router.get(
-  "/events/:id",
+  "/:id",
   validateRequest(eventSchemas.getById),
   eventController.getEventByIdHandler
 );
@@ -35,7 +35,7 @@ router.get(
  * PUT /events/:id
  */
 router.put(
-  "/events/:id",
+  "/:id",
   validateRequest(eventSchemas.update),
   eventController.updateEventHandler
 );
@@ -44,7 +44,7 @@ router.put(
  * DELETE /events/:id
  */
 router.delete(
-  "/events/:id",
+  "/:id",
   validateRequest(eventSchemas.delete),
   eventController.deleteEventHandler
 );

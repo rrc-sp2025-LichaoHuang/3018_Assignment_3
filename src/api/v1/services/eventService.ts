@@ -3,39 +3,66 @@ import { Event } from "../models/eventModel";
 let events: Event[] = [];
 let idCounter = 1;
 
-export const createEventService = (event: Event): Event => {
+/**
+ * Create Event
+ */
+export const createEvent = async (data: any): Promise<Event> => {
+  const now = new Date().toISOString();
+
   const newEvent: Event = {
-    id: idCounter++,
-    ...event,
+    id: `evt_${String(idCounter++).padStart(6, "0")}`,
+    ...data,
+    createdAt: now,
+    updatedAt: now,
   };
 
   events.push(newEvent);
   return newEvent;
 };
 
-export const getAllEventsService = (): Event[] => {
+/**
+ * Get All Events
+ */
+export const getAllEvents = async (): Promise<Event[]> => {
   return events;
 };
 
-export const getEventByIdService = (id: number): Event | undefined => {
-  return events.find((event) => event.id === id);
+/**
+ * Get Event By ID
+ */
+export const getEventById = async (
+  id: string
+): Promise<Event | null> => {
+  const event = events.find(e => e.id === id);
+  return event || null;
 };
 
-export const updateEventService = (
-  id: number,
-  updatedData: Partial<Event>
-): Event | undefined => {
-  const event = events.find((event) => event.id === id);
-  if (!event) return undefined;
+/**
+ * Update Event
+ */
+export const updateEvent = async (
+  id: string,
+  data: any
+): Promise<void> => {
+  const event = events.find(e => e.id === id);
 
-  Object.assign(event, updatedData);
-  return event;
+  if (!event) {
+    throw new Error("Event not found");
+  }
+
+  Object.assign(event, data);
+  event.updatedAt = new Date().toISOString();
 };
 
-export const deleteEventService = (id: number): boolean => {
-  const index = events.findIndex((event) => event.id === id);
-  if (index === -1) return false;
+/**
+ * Delete Event
+ */
+export const deleteEvent = async (id: string): Promise<void> => {
+  const index = events.findIndex(e => e.id === id);
+
+  if (index === -1) {
+    throw new Error("Event not found");
+  }
 
   events.splice(index, 1);
-  return true;
 };

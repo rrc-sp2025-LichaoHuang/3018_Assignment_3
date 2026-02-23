@@ -6,6 +6,6 @@ export interface Event {
     registrationCount: number;
     status: string;
     category: string;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
 }

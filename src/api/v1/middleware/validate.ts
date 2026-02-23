@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ObjectSchema } from "joi";
-import { HTTP_STATUS } from "src/constants/httpStatus";
+import { HTTP_STATUS } from "../../../constants/httpStatus";
 
 interface RequestSchemas {
   body?: ObjectSchema;

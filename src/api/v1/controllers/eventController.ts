@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as eventService from "../services/eventService";
-import { HTTP_STATUS } from "src/constants/httpStatus";
+import { HTTP_STATUS } from "../../../constants/httpStatus";
 
 /**
  * Create Event
