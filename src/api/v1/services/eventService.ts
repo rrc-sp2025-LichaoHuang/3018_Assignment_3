@@ -1,10 +1,17 @@
 import { Event } from "../models/eventModel";
+import * as repository from "../repositories/firestoreRepository";
 
-let events: Event[] = [];
+const COLLECTION = "events";
+
 let idCounter = 1;
 
 /**
- * Create Event
+ * Creates a new event and stores it in Firestore.
+ *
+ * Generates a unique event ID and timestamps before saving.
+ *
+ * @param data Event payload received from controller
+ * @returns The newly created event object
  */
 export const createEvent = async (data: any): Promise<Event> => {
   const now = new Date().toISOString();
@@ -16,53 +23,84 @@ export const createEvent = async (data: any): Promise<Event> => {
     updatedAt: now,
   };
 
-  events.push(newEvent);
+  await repository.createDocument<Event>(
+    COLLECTION,
+    newEvent,
+    newEvent.id
+  );
+
   return newEvent;
 };
 
 /**
- * Get All Events
+ * Retrieves all events from Firestore.
+ *
+ * @returns Array of events
  */
 export const getAllEvents = async (): Promise<Event[]> => {
-  return events;
+  const snapshot = await repository.getDocuments(COLLECTION);
+  return snapshot.docs.map(doc => doc.data() as Event);
 };
 
 /**
- * Get Event By ID
+ * Retrieves a single event by ID.
+ *
+ * @param id Event ID
+ * @returns Event if found, otherwise null
  */
 export const getEventById = async (
   id: string
 ): Promise<Event | null> => {
-  const event = events.find(e => e.id === id);
-  return event || null;
+  const doc = await repository.getDocumentById(COLLECTION, id);
+
+  if (!doc) {
+    return null;
+  }
+
+  return doc.data() as Event;
 };
 
 /**
- * Update Event
+ * Updates an existing event in Firestore.
+ *
+ * Throws an error if the event does not exist.
+ *
+ * @param id Event ID
+ * @param data Partial event fields to update
  */
 export const updateEvent = async (
   id: string,
-  data: any
+  data: Partial<Event>
 ): Promise<void> => {
-  const event = events.find(e => e.id === id);
+  const existing = await getEventById(id);
 
-  if (!event) {
+  if (!existing) {
     throw new Error("Event not found");
   }
 
-  Object.assign(event, data);
-  event.updatedAt = new Date().toISOString();
+  await repository.updateDocument<Event>(
+    COLLECTION,
+    id,
+    {
+      ...data,
+      updatedAt: new Date().toISOString(),
+    }
+  );
 };
 
 /**
- * Delete Event
+ * Deletes an event from Firestore.
+ *
+ * Throws an error if the event does not exist.
+ *
+ * @param id Event ID
  */
 export const deleteEvent = async (id: string): Promise<void> => {
-  const index = events.findIndex(e => e.id === id);
+  const existing = await getEventById(id);
 
-  if (index === -1) {
+  if (!existing) {
     throw new Error("Event not found");
   }
 
-  events.splice(index, 1);
+  await repository.deleteDocument(COLLECTION, id);
 };
