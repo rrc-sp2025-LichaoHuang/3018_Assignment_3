@@ -3,7 +3,7 @@ import Joi from "joi";
 export const eventSchemas = {
   create: {
     body: Joi.object({
-      name: Joi.string().min(3).required(),
+      name: Joi.string().min(5).required(),
 
       date: Joi.date()
         .greater("now")
@@ -26,7 +26,8 @@ export const eventSchemas = {
 
       category: Joi.string()
         .valid("conference", "workshop", "meetup", "seminar", "general")
-        .default("general"),
+        .default("general")
+        .required(),
     }),
   },
 
